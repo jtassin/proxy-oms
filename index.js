@@ -18,9 +18,9 @@ proxy
   .all('/*')
   .poison(poisons.slowClose({ delay: 1000 }))
   .poison(poisons.slowRead({ bps: 128 }))
-  .withRule(rules.probability(50))
+  
 
-  proxy.listen(3000)
+proxy.all('*').poison(poisons.abort()).withRule(rules.probability(50))
 
 // var rocky = require('rocky')
 // const express = require('express')
@@ -77,11 +77,13 @@ proxyWs
 setTimeout(() => {
     // Finally, listen on network
     proxyWs.listen(5001)
-    console.log('Web socket server listening on port: 3000')
+    proxy.listen(3000)
+    console.log('Web socket server listening on port: 5001')
 
 }, 5e3);
 
 setTimeout(() => {
+    toxy.admin().remove(proxy)
     process.exit(-1)
 }, 20000);
 
